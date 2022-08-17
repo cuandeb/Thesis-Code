@@ -1,12 +1,10 @@
 import numpy as np
-import matplotlib.pyplot as plt 
 from numpy.linalg import inv
 from astropy.io import ascii
-from tqdm import tqdm
 import json
 import os
 import time
-import pandas as pd
+
 
 
 
@@ -49,7 +47,7 @@ def generate_params(filepath):
 
 
 def generate_arrays(n_obs,n_points): 
-
+    """Generates the arrays used by the chi_squared function """
     _chi = np.zeros(n_points,dtype=np.int64)
     _per = np.zeros(n_points,dtype=np.int64)
     _func = np.zeros(n_obs,dtype=np.int64)
@@ -62,6 +60,9 @@ def extract_source_id(filepath, delim = '/'):
 
 
 def write_to_json(dictionary,filepath):
+    
+    """Dumps the results of a curve fit to a JSON file"""
+    
     folder = r"C:\Users\cuand\ESAC Internship\OHIR Sample\OHIR_sources_json"
     source = extract_source_id(filepath)
     new_file = f"{folder}\{source}.json"
@@ -81,16 +82,15 @@ def read_list_from_file(file):
 #------------------------------------------
 # Chi squared function
 
-@profile
 def run_chi_squared(filepath,period=None):
 
     TWO_PI = 2*np.pi
 
-    #if period is not None: 
-    #    P_MIN=period-99
-    #    P_MAX=period+99
-    #    DELTA_P = int(P_MAX-P_MIN)
-    #    print("Short Run")
+    if period is not None: 
+        P_MIN=period-99
+        P_MAX=period+99
+        DELTA_P = int(P_MAX-P_MIN)
+        print("Short Run")
     
     #else: 
     P_MIN = 100
@@ -99,25 +99,12 @@ def run_chi_squared(filepath,period=None):
     PERIODS = np.arange(P_MIN,P_MAX)
     print("Long Run")
 
-    jd, mag, mag_err = read_ascii_file(filepath)
-    jd = jd-2450000
-    nobs = len(jd)
-    weights = 1/(mag_err**2)
-    jd_min = np.min(jd)
-    jd = jd - jd_min
+    nobs, weights, jd, mag, jd_min, mag_err = generate_params(filepath)
 
-
-    #nobs, weights, jd, mag, jd_min, mag_err = generate_params(filepath)
-
-    #chi, per, func = generate_arrays(nobs, DELTA_P)
-
-    chi = np.zeros(DELTA_P)
-    per = np.zeros(DELTA_P)
-    func = np.zeros(nobs)
-
+    chi, per, func = generate_arrays(nobs, DELTA_P)
     chi_min = 10000000.
 
-    for i in tqdm(PERIODS):
+    for i in PERIODS:
         
         chiminperiod = 10000000.
 
@@ -159,8 +146,8 @@ def run_chi_squared(filepath,period=None):
 
                 if chi_phase <= chi_min: 
                     chi_min = chi_phase
-                    factasi=fact
-                    error_factasi=0.01
+                    ffactor=fact
+                    error_ffactor=0.01
                     period = per[i]
                     error_period=(period**2)/(2*(np.max(jd)-np.min(jd)))
                     phase=f
@@ -170,8 +157,8 @@ def run_chi_squared(filepath,period=None):
                     ampli=b*2
                     if ampli <= 0:
                         ampli=-ampli
-                        factasi=1-factasi
-                        phase=phase+factasi
+                        ffactor=1-ffactor
+                        phase=phase+ffactor
 
                     if phase > 1.:
                         phase=phase-1
@@ -179,7 +166,7 @@ def run_chi_squared(filepath,period=None):
                     error_ampli=2*np.sqrt(matrix_inv[0,0])
                     magmed=a
                     error_magmed=np.sqrt(matrix_inv[1,1])
-                    #print(factasi)
+                    #print(ffactor)
 
     jd = jd+jd_min
 
@@ -192,7 +179,7 @@ def run_chi_squared(filepath,period=None):
         'final_period':(period, error_period),
         'phase':(phase, error_phase),
         'amplitude':(ampli, error_ampli),
-        'ffactor':(factasi,error_factasi), 
+        'ffactor':(ffactor,error_ffactor), 
         'mag_med': (magmed, error_magmed)
     }
 
@@ -203,39 +190,24 @@ def run_chi_squared(filepath,period=None):
 #-----------------------------
 #Testing the script
 
-TEST_DIR = r"C:\Users\cuand\ESAC Internship\OHIR sample\OHIR_sources_ascii"
-
-TEST_FILE_a=r"C:\Users\cuand\ESAC_Internship\Arecibo Sample\Arecibo_sources_ascii\4596654564903027456.dat"
-
-TEST_FILE=r"C:\Users\cuand\ESAC Internship\OHIR Sample\OHIR_sources_ascii\25602162613059072.dat"
-
-DATA_FILE = r"C:\Users\cuand\OneDrive\Documents\LVP Data\new_periods.csv"
-
+#DIR = <Insert path of ascii files here>
 
 
 def asymmetric_fit(filepath, period=None): 
     #print(period)   
     data = run_chi_squared(filepath, period)
     write_to_json(data, filepath)
-    #return data
+    return data
 
     
-    
-    
-
-    
+      
 if __name__=='__main__': 
-    #file_list = files_from_directory(TEST_DIR)
-    #for file in file_list:
-       # asymmetric_fit(file)
-    #for file in file_list
-    #print(names)
+    #print('Start script...')
+    file_list = files_from_directory(DIR)
+    for file in file_list:
+        asymmetric_fit(file)
+
     
 
-
-    #print('Start script...')
-    start = time.time()
-    asymmetric_fit(TEST_FILE)
-    end = time.time()
-    print((end-start)/60)    
+   
 
