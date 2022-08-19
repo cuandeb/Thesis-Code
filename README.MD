@@ -22,7 +22,7 @@ This repo contains four modules devoted to the fitting of Long Period Variable e
 
 *asymmetric_lc.py* performs the same task but fits the data with an asymmetric cosine function, typical of Mira variable stars. 
 
-*plotting_lc.py* plots the result of the fitting performed by the two previous modules. Four plots are generated: A plot of the epoch photometry, a plot of the fitted curve, a periodogram ($$\chi^2$$ vs. period for the test periods), and a folded light curve constructed from the period of best fit. An example of such a plot is shown below
+*plotting_lc.py* plots the result of the fitting performed by the two previous modules. Four plots are generated: A plot of the epoch photometry, a plot of the fitted curve, a periodogram (chi-squared value vs. period for the test periods), and a folded light curve constructed from the period of best fit. An example of such a plot is shown below
 
 ![image](https://user-images.githubusercontent.com/90631697/185609355-5ef14008-2a97-4e48-84e2-a1d0457d06c2.png)
 
