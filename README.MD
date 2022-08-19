@@ -8,7 +8,7 @@ This module contains a set of functions that can unpack **Gaia** photometry data
 
 ## Light Curves
 
-This repo contains four modules devoted to the fitting of epoch photometry data with a periodic light curve function. 
+This repo contains four modules devoted to the fitting of Long Period Variable epoch photometry data with a periodic light curve function. 
 
 *symmetric_lc.py* contains a functions used to fit a regular symmetric sinusoidal function to a photometry time series. The code is adapted from an IDL script orignally written by F. Jimenez-Esteban from a previous 2006 study. The fitting function takes input photometry data from an ascii file with the following structure
 
@@ -19,3 +19,11 @@ This repo contains four modules devoted to the fitting of epoch photometry data 
 | 2456941.7547726203 | 8.097049542037922 | 0.01587221099975183  |
 |         ...        |        ...        |          ...         |
 
+
+*asymmetric_lc.py* performs the same task but fits the data with an asymmetric cosine function, typical of Mira variable stars. 
+
+*plotting_lc.py* plots the result of the fitting performed by the two previous modules. Four plots are generated: A plot of the epoch photometry, a plot of the fitted curve, a periodogram ($\chi^2$ vs. period for the test periods), and a folded light curve constructed from the period of best fit. An example of such a plot is shown below
+
+[4105885861921243392_alc_model.pdf](https://github.com/cuandeb/Thesis-Code/files/9381746/4105885861921243392_alc_model.pdf)
+
+Finally, *ALC_fitting.py* combines all of the three previous modules. Given a list of ascii files with the structure shown above it will fit a light curve, pass the fit parameters to the plotting function and outputs the 4 plots. The function includes an option to first fit a sinusoidal light curve to the data and pass these parameters to the asymmetric fitting function which will then perform an abridged fit using the input parameters to constrain the new fit. 
