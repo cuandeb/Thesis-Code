@@ -24,6 +24,6 @@ This repo contains four modules devoted to the fitting of Long Period Variable e
 
 *plotting_lc.py* plots the result of the fitting performed by the two previous modules. Four plots are generated: A plot of the epoch photometry, a plot of the fitted curve, a periodogram ($\chi^2$ vs. period for the test periods), and a folded light curve constructed from the period of best fit. An example of such a plot is shown below
 
-[4105885861921243392_alc_model.pdf](https://github.com/cuandeb/Thesis-Code/files/9381746/4105885861921243392_alc_model.pdf)
+![image](https://user-images.githubusercontent.com/90631697/185609355-5ef14008-2a97-4e48-84e2-a1d0457d06c2.png)
 
 Finally, *ALC_fitting.py* combines all of the three previous modules. Given a list of ascii files with the structure shown above it will fit a light curve, pass the fit parameters to the plotting function and outputs the 4 plots. The function includes an option to first fit a sinusoidal light curve to the data and pass these parameters to the asymmetric fitting function which will then perform an abridged fit using the input parameters to constrain the new fit. 
