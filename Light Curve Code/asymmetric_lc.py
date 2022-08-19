@@ -5,9 +5,6 @@ import json
 import os
 import time
 
-
-
-
 #-------------------------------
 
 #Define functions
